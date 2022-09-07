@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 
 TextField genericTextField(String text, IconData icon, bool isPasswordType,
-    TextEditingController controller) {
+    TextEditingController controller,
+    [Function()? onEditComplete, bool isNext = false]) {
+  //onEditComplete is optional argument
   return TextField(
     maxLines: 1,
     maxLength: 30,
     controller: controller,
+    textInputAction:
+        isNext ? TextInputAction.next : null, // Moves focus to next.
     obscureText: isPasswordType,
     enableSuggestions: !isPasswordType,
     autocorrect: !isPasswordType,
     cursorColor: Colors.white,
+    onEditingComplete: onEditComplete,
     style: TextStyle(color: Colors.white.withOpacity(0.9)),
     decoration: InputDecoration(
       prefixIcon: Icon(

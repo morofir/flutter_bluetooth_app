@@ -6,6 +6,7 @@ import 'package:ble_project/screens/signUpScreen.dart';
 import 'package:ble_project/utils/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../genericWidgets/genBtn.dart';
 
@@ -19,6 +20,13 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreenState extends State<SignInScreen> {
   TextEditingController _emailTextController = TextEditingController();
   TextEditingController _passTextController = TextEditingController();
+  moshe(String hex) {
+    hex = hex.toUpperCase().replaceAll('#', "");
+    if (hex.length == 6) {
+      hex = "FF" + hex;
+    }
+    return Color(int.parse(hex, radix: 16));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,30 +57,20 @@ class _SignInScreenState extends State<SignInScreen> {
                 height: 15,
               ),
               genericTextField("Enter Email", Icons.person_outline, false,
-                  _emailTextController),
+                  _emailTextController, null, true),
               const SizedBox(
                 height: 10,
               ),
               genericTextField("Enter password", Icons.lock_outline, true,
-                  _passTextController),
+                  _passTextController, () {
+                FirebaseLogin(context);
+              }),
               const SizedBox(
                 height: 50,
               ),
               forgetPassword(context),
               genericButton(context, "Login", () {
-                FirebaseAuth.instance
-                    .signInWithEmailAndPassword(
-                        email: _emailTextController.text,
-                        password: _passTextController.text)
-                    .then((value) {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const HomeScreen()));
-                }).onError((error, stackTrace) {
-                  genericAlertDialog(context, "Error", error.toString());
-                  print("Error ${error.toString()}");
-                });
+                FirebaseLogin(context);
               }),
               signUpOptions(context)
             ],
@@ -80,6 +78,20 @@ class _SignInScreenState extends State<SignInScreen> {
         )),
       ),
     );
+  }
+
+  void FirebaseLogin(BuildContext context) {
+    FirebaseAuth.instance
+        .signInWithEmailAndPassword(
+            email: _emailTextController.text,
+            password: _passTextController.text)
+        .then((value) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+    }).onError((error, stackTrace) {
+      genericAlertDialog(context, "Error", error.toString());
+      print("Error ${error.toString()}");
+    });
   }
 }
 

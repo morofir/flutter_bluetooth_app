@@ -49,22 +49,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 height: 200,
               ),
               genericTextField("Enter Email", Icons.person_outline, false,
-                  _emailTextController),
+                  _emailTextController, null, true),
               const SizedBox(
                 height: 30,
               ),
               genericTextField("Enter password", Icons.lock_outline, true,
-                  _passTextController),
+                  _passTextController, null, true),
               const SizedBox(
                 height: 15,
               ),
               genericTextField("Enter Full Name", Icons.person, false,
-                  _fullNameTextController),
+                  _fullNameTextController, null, true),
               const SizedBox(
                 height: 15,
               ),
               genericTextField("Enter Phone Number", Icons.phone, false,
-                  _PhoneTextController),
+                  _PhoneTextController, null, true),
               const SizedBox(
                 height: 15,
               ),
