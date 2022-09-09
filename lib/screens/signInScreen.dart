@@ -1,12 +1,11 @@
 import 'package:ble_project/genericWidgets/genAlert.dart';
 import 'package:ble_project/genericWidgets/genTextField.dart';
 import 'package:ble_project/screens/forgotPassScreen.dart';
-import 'package:ble_project/screens/homeScreen.dart';
+import 'package:ble_project/screens/scanScreen.dart';
 import 'package:ble_project/screens/signUpScreen.dart';
 import 'package:ble_project/utils/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../genericWidgets/genBtn.dart';
 
@@ -20,13 +19,6 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreenState extends State<SignInScreen> {
   TextEditingController _emailTextController = TextEditingController();
   TextEditingController _passTextController = TextEditingController();
-  moshe(String hex) {
-    hex = hex.toUpperCase().replaceAll('#', "");
-    if (hex.length == 6) {
-      hex = "FF" + hex;
-    }
-    return Color(int.parse(hex, radix: 16));
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +79,7 @@ class _SignInScreenState extends State<SignInScreen> {
             password: _passTextController.text)
         .then((value) {
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+          context, MaterialPageRoute(builder: (context) => const ScanScreen()));
     }).onError((error, stackTrace) {
       genericAlertDialog(context, "Error", error.toString());
       print("Error ${error.toString()}");

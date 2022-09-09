@@ -1,5 +1,5 @@
 import 'package:ble_project/genericWidgets/genAlert.dart';
-import 'package:ble_project/screens/homeScreen.dart';
+import 'package:ble_project/screens/scanScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -115,7 +115,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const HomeScreen(),
+                            builder: (context) => const ScanScreen(),
                           ),
                         );
                       }).onError((error, stackTrace) {
