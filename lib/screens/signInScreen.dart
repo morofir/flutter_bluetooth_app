@@ -1,11 +1,11 @@
 import 'package:ble_project/genericWidgets/genAlert.dart';
 import 'package:ble_project/genericWidgets/genTextField.dart';
 import 'package:ble_project/screens/forgotPassScreen.dart';
-import 'package:ble_project/screens/scanScreen.dart';
 import 'package:ble_project/screens/signUpScreen.dart';
+import 'package:ble_project/utils/AuthService.dart';
 import 'package:ble_project/utils/colors.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../genericWidgets/genBtn.dart';
 
@@ -19,9 +19,9 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreenState extends State<SignInScreen> {
   TextEditingController _emailTextController = TextEditingController();
   TextEditingController _passTextController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
     var screenHeight = MediaQuery.of(context).size.height;
     var screenWidth = MediaQuery.of(context).size.width;
 
@@ -55,14 +55,16 @@ class _SignInScreenState extends State<SignInScreen> {
               ),
               genericTextField("Enter password", Icons.lock_outline, true,
                   _passTextController, () {
-                FirebaseLogin(context);
+                FirebaseLogin(authService, _emailTextController,
+                    _passTextController, context); //on done callback
               }),
               const SizedBox(
                 height: 50,
               ),
               forgetPassword(context),
               genericButton(context, "Login", () {
-                FirebaseLogin(context);
+                FirebaseLogin(authService, _emailTextController,
+                    _passTextController, context);
               }),
               signUpOptions(context)
             ],
@@ -72,15 +74,14 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  void FirebaseLogin(BuildContext context) {
-    FirebaseAuth.instance
-        .signInWithEmailAndPassword(
-            email: _emailTextController.text,
-            password: _passTextController.text)
-        .then((value) {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const ScanScreen()));
-    }).onError((error, stackTrace) {
+  void FirebaseLogin(
+      AuthService authService,
+      TextEditingController _emailTextController,
+      TextEditingController _passTextController,
+      BuildContext context) async {
+    await authService
+        .signIn(_emailTextController.text, _passTextController.text)
+        .catchError((error, stackTrace) {
       genericAlertDialog(context, "Error", error.toString());
       print("Error ${error.toString()}");
     });

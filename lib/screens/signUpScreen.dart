@@ -1,8 +1,10 @@
 import 'package:ble_project/genericWidgets/genAlert.dart';
 import 'package:ble_project/screens/scanScreen.dart';
+import 'package:ble_project/utils/AuthService.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../genericWidgets/genBtn.dart';
 import '../genericWidgets/genTextField.dart';
@@ -27,6 +29,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     var screenHeight = MediaQuery.of(context).size.height;
     var screenWidth = MediaQuery.of(context).size.width;
+
+    final authService = Provider.of<AuthService>(context);
 
     return Scaffold(
       body: Container(
@@ -104,21 +108,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ],
               ),
-              genericButton(context, "Login", () {
+              genericButton(context, "Login", () async {
                 agree
-                    ? FirebaseAuth.instance
-                        .createUserWithEmailAndPassword(
-                            email: _emailTextController.text,
-                            password: _passTextController.text)
+                    ? await authService
+                        .signUp(
+                            _emailTextController.text, _passTextController.text)
                         .then((value) {
                         print("create new account: ${value}");
-                        Navigator.push(
-                          context,
+                        Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => const ScanScreen(),
-                          ),
+                              builder: (context) => const ScanScreen()),
                         );
-                      }).onError((error, stackTrace) {
+                      }).catchError((error, stackTrace) {
                         genericAlertDialog(context, "Error", error.toString());
                         print("Error ${error.toString()}");
                       })

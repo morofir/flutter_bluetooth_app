@@ -1,21 +1,14 @@
-import 'package:ble_project/screens/signInScreen.dart';
+import 'package:ble_project/utils/AuthService.dart';
+import 'package:ble_project/utils/AuthenticationWrapper.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-
-const _themeColor = Colors.blueGrey;
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  runApp(
-    MaterialApp(
-      title: 'Bluetooth application',
-      color: _themeColor,
-      theme: ThemeData(primarySwatch: _themeColor),
-      home: const SignInScreen(),
-    ),
-  );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -23,11 +16,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const SignInScreen(),
-    );
+    return MultiProvider(
+        providers: [
+          Provider<AuthService>(
+            create: (_) => AuthService(),
+          )
+        ],
+        child: MaterialApp(
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+          ),
+          home: AuthenticationWrapper(),
+        ));
   }
 }

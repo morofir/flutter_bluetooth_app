@@ -9,14 +9,16 @@ class ScanResultTile extends StatelessWidget {
   final VoidCallback onTap;
 
   Widget _buildTitle(BuildContext context) {
-    if (result.device.name.length > 0) {
+    if (result.device.name.isNotEmpty) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(result.device.name,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(color: Colors.redAccent)),
+              style: const TextStyle(
+                  color: Colors
+                      .blue)), //if the device got a name will show in blue, otherwise only the id will shown (black)
           Text(
             result.device.id.toString(),
             style: Theme.of(context).textTheme.caption,
@@ -53,30 +55,29 @@ class ScanResultTile extends StatelessWidget {
     );
   }
 
-  String getNiceHexArray(List<int> bytes) {
+  String getHexArray(List<int> bytes) {
     return '[${bytes.map((i) => i.toRadixString(16).padLeft(2, '0')).join(', ')}]'
         .toUpperCase();
   }
 
-  String getNiceManufacturerData(Map<int, List<int>> data) {
+  String getManufacturerData(Map<int, List<int>> data) {
     if (data.isEmpty) {
       return "N/A";
     }
     List<String> res = [];
     data.forEach((id, bytes) {
-      res.add(
-          '${id.toRadixString(16).toUpperCase()}: ${getNiceHexArray(bytes)}');
+      res.add('${id.toRadixString(16).toUpperCase()}: ${getHexArray(bytes)}');
     });
     return res.join(', ');
   }
 
-  String getNiceServiceData(Map<String, List<int>> data) {
+  String getServiceData(Map<String, List<int>> data) {
     if (data.isEmpty) {
       return "N/A";
     }
     List<String> res = [];
     data.forEach((id, bytes) {
-      res.add('${id.toUpperCase()}: ${getNiceHexArray(bytes)}');
+      res.add('${id.toUpperCase()}: ${getHexArray(bytes)}');
     });
     return res.join(', ');
   }
@@ -95,12 +96,8 @@ class ScanResultTile extends StatelessWidget {
             context, 'Complete Local Name', result.advertisementData.localName),
         _buildAdvRow(context, 'Tx Power Level',
             '${result.advertisementData.txPowerLevel ?? 'N/A'}'),
-        _buildAdvRow(
-            context,
-            'Manufacturer Data',
-            getNiceManufacturerData(
-                    result.advertisementData.manufacturerData) ??
-                'N/A'),
+        _buildAdvRow(context, 'Manufacturer Data',
+            getManufacturerData(result.advertisementData.manufacturerData)),
         _buildAdvRow(
             context,
             'Service UUIDs',
@@ -108,7 +105,7 @@ class ScanResultTile extends StatelessWidget {
                 ? result.advertisementData.serviceUuids.join(', ').toUpperCase()
                 : 'N/A'),
         _buildAdvRow(context, 'Service Data',
-            getNiceServiceData(result.advertisementData.serviceData) ?? 'N/A'),
+            getServiceData(result.advertisementData.serviceData)),
       ],
     );
   }

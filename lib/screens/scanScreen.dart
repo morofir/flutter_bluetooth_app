@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'package:ble_project/screens/signInScreen.dart';
-import 'package:ble_project/widgets.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:ble_project/genericWidgets/ScanResultTile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
+import '../utils/AuthService.dart';
+import 'BToffScreen.dart';
 
 class ScanScreen extends StatelessWidget {
   const ScanScreen({Key? key}) : super(key: key);
@@ -18,7 +18,7 @@ class ScanScreen extends StatelessWidget {
           builder: (c, snapshot) {
             final state = snapshot.data as BluetoothState;
             if (state == BluetoothState.on) {
-              return FindDevicesScreen();
+              return const FindDevicesScreen();
             }
             return BluetoothOffScreen(state: state);
           }),
@@ -26,58 +26,21 @@ class ScanScreen extends StatelessWidget {
   }
 }
 
-class BluetoothOffScreen extends StatelessWidget {
-  const BluetoothOffScreen({Key? key, required this.state}) : super(key: key);
-
-  final BluetoothState state;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.red,
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            const Icon(
-              Icons.bluetooth_disabled,
-              size: 200.0,
-              color: Colors.white54,
-            ),
-            Text(
-              'Bluetooth Adapter is ${state != null ? state.toString().substring(15) : 'not available'}.',
-            ),
-            const SizedBox(
-              height: 50,
-            ),
-            ElevatedButton(
-                onPressed: () async {
-                  await openAppSettings();
-                },
-                child: const Text("Open Phone Settings")),
-            const SizedBox(height: 50),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class FindDevicesScreen extends StatelessWidget {
+  const FindDevicesScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Find Devices'),
+        toolbarOpacity: 0.5,
+        title: const Text('Scan for Devices'),
         leading: IconButton(
           icon: const Icon(Icons.logout_sharp),
-          onPressed: () {
-            FirebaseAuth.instance.signOut().then(((value) {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const SignInScreen(),
-                  ));
+          onPressed: () async {
+            await authService.signOut().then(((value) {
               print("Signing out");
             }));
           },
@@ -85,13 +48,16 @@ class FindDevicesScreen extends StatelessWidget {
       ),
       body: RefreshIndicator(
         onRefresh: () =>
-            FlutterBlue.instance.startScan(timeout: const Duration(seconds: 4)),
+            FlutterBlue.instance.startScan(timeout: const Duration(seconds: 5)),
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
               StreamBuilder<List<BluetoothDevice>>(
-                stream: Stream.periodic(const Duration(seconds: 2))
+                stream: Stream.periodic(const Duration(
+                        seconds:
+                            10)) //every 10 second will send info about connected devices
                     .asyncMap((_) => FlutterBlue.instance.connectedDevices),
+                //async map: this stream waits for that future to complete before continuing with its result.
                 initialData: const [],
                 builder: (c, snapshot) => Column(
                   children: snapshot.data!
@@ -129,6 +95,7 @@ class FindDevicesScreen extends StatelessWidget {
                           result: r,
                           onTap: () => Navigator.of(context)
                               .push(MaterialPageRoute(builder: (context) {
+                            //in order to exec this function also (in the navigation)
                             r.device.connect();
                             return DeviceScreen(device: r.device);
                           })),
@@ -154,8 +121,8 @@ class FindDevicesScreen extends StatelessWidget {
           } else {
             return FloatingActionButton(
                 child: const Icon(Icons.search),
-                onPressed: () => FlutterBlue.instance
-                    .startScan(timeout: const Duration(seconds: 4)));
+                onPressed: () => FlutterBlue.instance.startScan(
+                    timeout: const Duration(seconds: 5))); // 5 second to search
           }
         },
       ),

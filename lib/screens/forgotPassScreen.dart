@@ -51,14 +51,9 @@ class _ForgotPassScreenState extends State<ForgotPassScreen> {
                 FirebaseAuth.instance
                     .sendPasswordResetEmail(email: _emailTextController.text)
                     .then((value) {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const SignInScreen()));
-
                   genericAlertDialog(context, "Email sent!",
                       "Check your email to reset the password!");
-                }).onError((error, stackTrace) {
+                }).catchError((error, stackTrace) {
                   genericAlertDialog(context, "Error", error.toString());
                   print("Error ${error.toString()}");
                 });
