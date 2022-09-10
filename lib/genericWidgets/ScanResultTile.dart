@@ -30,7 +30,7 @@ class ScanResultTile extends StatelessWidget {
     }
   }
 
-  Widget _buildAdvRow(BuildContext context, String title, String value) {
+  Widget _buildInfoLine(BuildContext context, String title, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
       child: Row(
@@ -86,25 +86,25 @@ class ScanResultTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExpansionTile(
       title: _buildTitle(context),
-      leading: Text(result.rssi.toString()),
+      leading: Text("${result.rssi}"),
       trailing: ElevatedButton(
         onPressed: (result.advertisementData.connectable) ? onTap : null,
         child: const Text('Connect'),
       ),
       children: <Widget>[
-        _buildAdvRow(
+        _buildInfoLine(
             context, 'Complete Local Name', result.advertisementData.localName),
-        _buildAdvRow(context, 'Tx Power Level',
+        _buildInfoLine(context, 'Tx Power Level',
             '${result.advertisementData.txPowerLevel ?? 'N/A'}'),
-        _buildAdvRow(context, 'Manufacturer Data',
+        _buildInfoLine(context, 'Manufacturer Data',
             getManufacturerData(result.advertisementData.manufacturerData)),
-        _buildAdvRow(
+        _buildInfoLine(
             context,
             'Service UUIDs',
             (result.advertisementData.serviceUuids.isNotEmpty)
                 ? result.advertisementData.serviceUuids.join(', ').toUpperCase()
                 : 'N/A'),
-        _buildAdvRow(context, 'Service Data',
+        _buildInfoLine(context, 'Service Data',
             getServiceData(result.advertisementData.serviceData)),
       ],
     );

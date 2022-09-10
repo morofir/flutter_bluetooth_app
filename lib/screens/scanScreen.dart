@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:ble_project/genericWidgets/ScanResultTile.dart';
+import 'package:ble_project/screens/userDetailScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:provider/provider.dart';
@@ -37,6 +38,20 @@ class FindDevicesScreen extends StatelessWidget {
       appBar: AppBar(
         toolbarOpacity: 0.5,
         title: const Text('Scan for Devices'),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(
+              Icons.settings,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const UserDetailScreen()));
+            },
+          )
+        ],
         leading: IconButton(
           icon: const Icon(Icons.logout_sharp),
           onPressed: () async {

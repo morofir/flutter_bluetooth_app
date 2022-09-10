@@ -41,6 +41,7 @@ dependencies:
   url_launcher: ^6.1.5
   flutter_blue: ^0.8.0
   permission_handler: ^10.0.0
+  cloud_firestore: ^3.4.7
 
 dev_dependencies:
   flutter_test:
