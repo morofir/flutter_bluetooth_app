@@ -59,9 +59,12 @@ class _SignInScreenState extends State<SignInScreen> {
                     _passTextController, context); //on done callback
               }),
               const SizedBox(
-                height: 50,
+                height: 70,
               ),
               forgetPassword(context),
+              const SizedBox(
+                height: 15,
+              ),
               genericButton(context, "Login", () {
                 FirebaseLogin(authService, _emailTextController,
                     _passTextController, context);
@@ -108,7 +111,7 @@ Widget forgetPassword(BuildContext context) {
   return Container(
     width: MediaQuery.of(context).size.width,
     height: 35,
-    alignment: Alignment.bottomRight,
+    alignment: Alignment.bottomLeft,
     child: TextButton(
       child: const Text(
         "Forgot Password?",
