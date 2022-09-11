@@ -11,6 +11,8 @@ class UserDetailScreen extends StatefulWidget {
 class _UserDetailScreenState extends State<UserDetailScreen> {
   @override
   Widget build(BuildContext context) {
+    CollectionReference usersInfo =
+        FirebaseFirestore.instance.collection('usersInfo');
     return MaterialApp(
         home: Scaffold(
       appBar: AppBar(title: const Text('User Details')),
@@ -20,15 +22,18 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
 // full name
 // phone num""
           child: StreamBuilder(
-        stream: FirebaseFirestore.instance.collection('usersInfo').snapshots(),
-        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        stream: usersInfo.snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           return ListView(
-            children: [
-              snapshot.data!.docs.map((user) {
-                return Center(child: ListTile(title: Text(user["full_name"])));
-              }).toList()
-            ],
-          );
+              children: snapshot.data!.docs.map((user) {
+            return Center(
+                child: ListTile(
+              title: Text(
+                user["email"],
+              ),
+              subtitle: Text(user["full_name"]),
+            ));
+          }).toList());
         },
       )),
     ));
